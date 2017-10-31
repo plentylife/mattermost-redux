@@ -10,7 +10,7 @@ import Selectors from 'selectors';
 import Store from 'store';
 import Utils from 'utils';
 
-export default {
+export {
     Actions,
     ActionTypes,
     Client,
