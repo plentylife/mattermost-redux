@@ -33,3 +33,4 @@ mattermost-redux-*.tgz
 /selectors
 /store
 /utils
+/index.js
