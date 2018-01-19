@@ -242,4 +242,55 @@ describe('Selectors.Teams', () => {
         const mentions3 = factory3(testState, team3.id);
         assert.ok(mentions3 === 0);
     });
+
+    describe('makeGetBadgeCountFromChannels', () => {
+        const getBadgeCountFromChannels = Selectors.makeGetBadgeCountFromChannels();
+
+        const state = {
+            entities: {
+                channels: {
+                    channels: {
+                        1000: {id: '1000', team_id: 'abcd', total_msg_count: 10},
+                        1001: {id: '1001', team_id: 'abcd', total_msg_count: 15},
+                        1002: {id: '1002', team_id: 'efgh', total_msg_count: 6},
+                        1003: {id: '1003', team_id: 'efgh', total_msg_count: 7},
+                        1004: {id: '1004', team_id: 'ijkl', total_msg_count: 20}
+                    },
+                    channelsInTeam: {
+                        abcd: ['1000', '1001'],
+                        efgh: ['1002', '1003'],
+                        ijkl: ['1004', '1005']
+                    },
+                    myMembers: {
+                        1000: {channel_id: '1000', user_id: 'aaaa', mention_count: 0, msg_count: 8},
+                        1001: {channel_id: '1001', user_id: 'aaaa', mention_count: 0, msg_count: 12},
+                        1002: {channel_id: '1002', user_id: 'aaaa', mention_count: 3, msg_count: 4},
+                        1003: {channel_id: '1003', user_id: 'aaaa', mention_count: 2, msg_count: 10},
+                        1004: {channel_id: '1004', user_id: 'aaaa', mention_count: 0, msg_count: 20}
+                    }
+                }
+            }
+        };
+
+        it('only unread messages', () => {
+            const actual = getBadgeCountFromChannels(state, 'abcd');
+            const expected = -1;
+
+            assert.equal(actual, expected);
+        });
+
+        it('unread messages and mentions', () => {
+            const actual = getBadgeCountFromChannels(state, 'efgh');
+            const expected = 5;
+
+            assert.equal(actual, expected);
+        });
+
+        it('no unreads', () => {
+            const actual = getBadgeCountFromChannels(state, 'ijkl');
+            const expected = 0;
+
+            assert.equal(actual, expected);
+        });
+    });
 });

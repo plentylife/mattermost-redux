@@ -217,3 +217,37 @@ export function makeGetBadgeCountForTeamId() {
         }
     );
 }
+
+// returns the badge for a team based on the loaded channels and channel members
+// > 0 means is returning the mention count
+// 0 means that there are no unread messages
+// -1 means that there are unread messages but no mentions
+export function makeGetBadgeCountFromChannels() {
+    return createSelector(
+        (state, teamId) => state.entities.channels.channelsInTeam[teamId],
+        (state) => state.entities.channels.channels,
+        (state) => state.entities.channels.myMembers,
+        (channelIds, channels, channelMembers) => {
+            let mentionCount = 0;
+            let messageCount = 0;
+
+            for (const id of channelIds) {
+                if (!channelMembers[id] || !channels[id]) {
+                    // This should never happen, but just double check to be safe
+                    continue;
+                }
+
+                mentionCount += channelMembers[id].mention_count;
+                messageCount += channels[id].total_msg_count - channelMembers[id].msg_count;
+            }
+
+            if (mentionCount) {
+                return mentionCount;
+            } else if (messageCount) {
+                return -1;
+            }
+
+            return 0;
+        }
+    );
+}
