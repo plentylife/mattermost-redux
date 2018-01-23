@@ -170,10 +170,10 @@ function completeLogin(data) {
             getMyTeams()(dispatch, getState)
         ];
 
-        const state = getState();
-        if (getConfig(state).EnableCustomEmoji === 'true') {
-            promises.push(getAllCustomEmojis()(dispatch, getState));
-        }
+        //const state = getState();
+        //if (getConfig(state).EnableCustomEmoji === 'true') {
+        //    promises.push(getAllCustomEmojis()(dispatch, getState));
+        //}
 
         try {
             await Promise.all(promises);
@@ -216,9 +216,9 @@ export function loadMe() {
             getMyTeamUnreads()(dispatch, getState)
         ];
 
-        if (getConfig(state).EnableCustomEmoji === 'true') {
-            promises.push(getAllCustomEmojis()(dispatch, getState));
-        }
+        //if (getConfig(state).EnableCustomEmoji === 'true') {
+        //    promises.push(getAllCustomEmojis()(dispatch, getState));
+        //}
 
         await Promise.all(promises);
 
