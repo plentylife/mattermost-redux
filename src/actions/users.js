@@ -5,7 +5,6 @@ import {batchActions} from 'redux-batched-actions';
 import {Client, Client4} from 'client';
 import {General} from 'constants';
 import {UserTypes, TeamTypes, AdminTypes} from 'action_types';
-import {getAllCustomEmojis} from './emojis';
 import {getMyTeams, getMyTeamMembers, getMyTeamUnreads} from './teams';
 
 import {
@@ -26,7 +25,6 @@ import {
     makeGroupMessageVisibleIfNecessary
 } from './preferences';
 
-import {getConfig} from 'selectors/entities/general';
 import {getCurrentUserId} from 'selectors/entities/users';
 
 export function checkMfa(loginId) {
@@ -170,11 +168,6 @@ function completeLogin(data) {
             getMyTeams()(dispatch, getState)
         ];
 
-        const state = getState();
-        if (getConfig(state).EnableCustomEmoji === 'true') {
-            promises.push(getAllCustomEmojis()(dispatch, getState));
-        }
-
         try {
             await Promise.all(promises);
         } catch (error) {
@@ -215,10 +208,6 @@ export function loadMe() {
             getMyTeamMembers()(dispatch, getState),
             getMyTeamUnreads()(dispatch, getState)
         ];
-
-        if (getConfig(state).EnableCustomEmoji === 'true') {
-            promises.push(getAllCustomEmojis()(dispatch, getState));
-        }
 
         await Promise.all(promises);
 
