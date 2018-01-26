@@ -5,6 +5,8 @@ import {batchActions} from 'redux-batched-actions';
 import {Client, Client4} from 'client';
 import {General} from 'constants';
 import {ChannelTypes, TeamTypes, UserTypes} from 'action_types';
+import EventEmitter from 'utils/event_emitter';
+
 import {logError} from './errors';
 import {bindClientFunc, forceLogoutIfNecessary} from './helpers';
 import {getProfilesByIds, getStatusesByIds} from './users';
@@ -76,6 +78,16 @@ export function getTeam(teamId) {
     );
 }
 
+export function getTeamByName(teamName) {
+    return bindClientFunc(
+        Client4.getTeamByName,
+        TeamTypes.GET_TEAM_REQUEST,
+        [TeamTypes.RECEIVED_TEAM, TeamTypes.GET_TEAM_SUCCESS],
+        TeamTypes.GET_TEAM_FAILURE,
+        teamName
+    );
+}
+
 export function getTeams(page = 0, perPage = General.TEAMS_CHUNK_SIZE) {
     return bindClientFunc(
         Client4.getTeams,
@@ -131,6 +143,45 @@ export function createTeam(team) {
         ]), getState);
 
         return {data: created};
+    };
+}
+
+export function deleteTeam(teamId) {
+    return async (dispatch, getState) => {
+        dispatch({type: TeamTypes.DELETE_TEAM_REQUEST}, getState);
+
+        try {
+            await Client4.deleteTeam(teamId);
+        } catch (error) {
+            forceLogoutIfNecessary(error, dispatch);
+            dispatch(batchActions([
+                {type: TeamTypes.DELETE_TEAM_FAILURE, error},
+                logError(error)(dispatch)
+            ]), getState);
+            return {error};
+        }
+
+        const entities = getState().entities;
+        const {currentTeamId} = entities.teams;
+        const actions = [];
+        if (teamId === currentTeamId) {
+            EventEmitter.emit('leave_team');
+            actions.push({type: ChannelTypes.SELECT_CHANNEL, data: ''});
+        }
+
+        actions.push(
+            {
+                type: TeamTypes.RECEIVED_TEAM_DELETED,
+                data: {id: teamId}
+            },
+            {
+                type: TeamTypes.DELETE_TEAM_SUCCESS
+            }
+        );
+
+        dispatch(batchActions(actions), getState);
+
+        return {data: true};
     };
 }
 
