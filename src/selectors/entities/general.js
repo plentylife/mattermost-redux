@@ -4,11 +4,11 @@
 import {createSelector} from 'reselect';
 
 export function getConfig(state) {
-    return state.entities.general.config;
+    return (state && state.entities && state.entities.general && state.entities.general.config) || {};
 }
 
 export function getLicense(state) {
-    return state.entities.general.license;
+    return (state && state.entities && state.entities.general && state.entities.general.license) || {};
 }
 
 export function getCurrentUrl(state) {
