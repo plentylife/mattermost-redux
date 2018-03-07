@@ -766,6 +766,34 @@ describe('Actions.Posts', () => {
 
         assert.deepEqual(
             Actions.getNeededCustomEmojis(state, {
+                abcd: {message: ':name3::name4:'},
+            }),
+            new Set(['name3', 'name4'])
+        );
+
+        assert.deepEqual(
+            Actions.getNeededCustomEmojis(state, {
+                abcd: {message: '.:name3:!'},
+            }),
+            new Set(['name3'])
+        );
+
+        assert.deepEqual(
+            Actions.getNeededCustomEmojis(state, {
+                abcd: {message: 'text:name3:text'},
+            }),
+            new Set([])
+        );
+
+        assert.deepEqual(
+            Actions.getNeededCustomEmojis(state, {
+                abcd: {message: '10:name3:10'},
+            }),
+            new Set([])
+        );
+
+        assert.deepEqual(
+            Actions.getNeededCustomEmojis(state, {
                 abcd: {message: ':name-3:'},
             }),
             new Set(['name-3'])
