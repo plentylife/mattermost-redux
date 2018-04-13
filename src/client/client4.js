@@ -3,6 +3,7 @@
 
 import EventEmitter from 'utils/event_emitter';
 import {General} from 'constants';
+import {sendMessage} from 'plenty-chat';
 
 const FormData = require('form-data');
 
@@ -1245,10 +1246,15 @@ export default class Client4 {
             this.trackEvent('api', 'api_posts_replied', {channel_id: post.channel_id});
         }
 
-        return this.doFetch(
+        const fetchRes = this.doFetch(
             `${this.getPostsRoute()}`,
             {method: 'post', body: JSON.stringify(post)}
         );
+        fetchRes.then((r) => {
+            sendMessage(r.user_id, r.channel_id, r.id);
+        })
+
+        return fetch;
     };
 
     updatePost = async (post) => {
