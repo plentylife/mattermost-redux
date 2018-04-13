@@ -12,6 +12,9 @@ module.exports = {
         library: ['Mattermost', '[name]'],
         filename: 'mattermost.[name].js',
     },
+    externals: {
+        'plenty-chat': 'commonjs plenty-chat',
+    },
     module: {
         rules: [
             {
