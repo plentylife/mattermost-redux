@@ -1,5 +1,5 @@
-// Copyright (c) 2018-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
 import {Client4} from 'client';
 import {RoleTypes} from 'action_types';
@@ -65,12 +65,12 @@ export function loadRolesIfNeeded(roles) {
             pendingRoles.add(role);
         }
         if (!state.entities.general.serverVersion) {
-            setPendingRoles(pendingRoles)(dispatch, getState);
+            setPendingRoles(Array.from(pendingRoles))(dispatch, getState);
             return {data: []};
         }
         if (!hasNewPermissions(state)) {
             if (state.entities.roles.pending) {
-                await setPendingRoles(new Set())(dispatch, getState);
+                await setPendingRoles([])(dispatch, getState);
             }
             return {data: []};
         }
@@ -83,10 +83,10 @@ export function loadRolesIfNeeded(roles) {
         }
 
         if (state.entities.roles.pending) {
-            await setPendingRoles(new Set())(dispatch, getState);
+            await setPendingRoles([])(dispatch, getState);
         }
         if (newRoles.size > 0) {
-            return await getRolesByNames(newRoles)(dispatch, getState);
+            return await getRolesByNames(Array.from(newRoles))(dispatch, getState);
         }
         return {data: state.entities.roles.roles};
     };

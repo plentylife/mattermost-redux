@@ -1,5 +1,5 @@
-// Copyright (c) 2016-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 // @flow
 
 import {General, Preferences} from 'constants';
@@ -20,7 +20,8 @@ export function getFullName(user: UserProfile): string {
 
 export function displayUsername(
     user: UserProfile,
-    teammateNameDisplay: string
+    teammateNameDisplay: string,
+    usernameWithPrefix: boolean,
 ): string {
     let name = localizeMessage('channel_loader.someone', 'Someone');
 
@@ -30,11 +31,11 @@ export function displayUsername(
         } else if (teammateNameDisplay === Preferences.DISPLAY_PREFER_FULL_NAME) {
             name = getFullName(user);
         } else {
-            name = user.username;
+            name = usernameWithPrefix ? `@${user.username}` : user.username;
         }
 
-        if (!name.trim().length) {
-            name = user.username;
+        if (!name || name.trim().length === 0) {
+            name = usernameWithPrefix ? `@${user.username}` : user.username;
         }
     }
 

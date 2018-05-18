@@ -1,5 +1,5 @@
-// Copyright (c) 2017 Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
 import fs from 'fs';
 import assert from 'assert';
@@ -874,6 +874,41 @@ describe('Actions.Admin', () => {
         assert.ok(plugins[testPlugin.id].active);
         assert.ok(plugins[testPlugin2.id]);
         assert.ok(!plugins[testPlugin2.id].active);
+    });
+
+    it('getPluginStatuses', async () => {
+        if (TestHelper.isLiveServer()) {
+            console.log('Skipping mock-only test');
+            return;
+        }
+
+        const testPluginStatus = {
+            plugin_id: 'testplugin',
+            state: 1,
+        };
+        const testPluginStatus2 = {
+            plugin_id: 'testplugin2',
+            state: 0,
+        };
+
+        nock(Client4.getBaseRoute()).
+            get('/plugins/statuses').
+            reply(200, [testPluginStatus, testPluginStatus2]);
+
+        await Actions.getPluginStatuses()(store.dispatch, store.getState);
+
+        const state = store.getState();
+        const request = state.requests.admin.getPluginStatuses;
+        if (request.status === RequestStatus.FAILURE) {
+            throw new Error('getPluginStatuses request failed err=' + request.error);
+        }
+
+        const pluginStatuses = state.entities.admin.pluginStatuses;
+        assert.ok(pluginStatuses);
+        assert.ok(pluginStatuses[testPluginStatus.plugin_id]);
+        assert.ok(pluginStatuses[testPluginStatus.plugin_id].active);
+        assert.ok(pluginStatuses[testPluginStatus2.plugin_id]);
+        assert.ok(!pluginStatuses[testPluginStatus2.plugin_id].active);
     });
 
     it('removePlugin', async () => {

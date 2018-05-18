@@ -1,5 +1,5 @@
-// Copyright (c) 2016-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 // @flow
 
 const WebsocketEvents = {
@@ -35,6 +35,7 @@ const WebsocketEvents = {
     EMOJI_ADDED: 'emoji_added',
     LICENSE_CHANGED: 'license_changed',
     CONFIG_CHANGED: 'config_changed',
+    PLUGIN_STATUSES_CHANGED: 'plugin_statuses_changed',
 };
 
 export default WebsocketEvents;

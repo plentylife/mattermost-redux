@@ -1,5 +1,5 @@
-// Copyright (c) 2016-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
 import {batchActions} from 'redux-batched-actions';
 
@@ -247,23 +247,37 @@ export function resetCreatePostRequest() {
 }
 
 export function deletePost(post) {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        const state = getState();
         const delPost = {...post};
+        if (delPost.type === Posts.POST_TYPES.COMBINED_USER_ACTIVITY) {
+            delPost.system_post_ids.forEach((systemPostId) => {
+                const systemPost = Selectors.getPost(state, systemPostId);
+                if (systemPost) {
+                    dispatch(deletePost(systemPost));
+                }
+            });
 
-        dispatch({
-            type: PostTypes.POST_DELETED,
-            data: delPost,
-            meta: {
-                offline: {
-                    effect: () => Client4.deletePost(post.id),
-                    commit: {type: PostTypes.POST_DELETED},
-                    rollback: {
-                        type: PostTypes.RECEIVED_POST,
-                        data: delPost,
+            dispatch({
+                type: PostTypes.POST_DELETED,
+                data: delPost,
+            });
+        } else {
+            dispatch({
+                type: PostTypes.POST_DELETED,
+                data: delPost,
+                meta: {
+                    offline: {
+                        effect: () => Client4.deletePost(post.id),
+                        commit: {type: PostTypes.POST_DELETED},
+                        rollback: {
+                            type: PostTypes.RECEIVED_POST,
+                            data: delPost,
+                        },
                     },
                 },
-            },
-        });
+            });
+        }
 
         return {data: true};
     };

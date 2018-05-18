@@ -1,5 +1,5 @@
-// Copyright (c) 2016-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
 import {combineReducers} from 'redux';
 import {PostTypes, PreferenceTypes, SearchTypes, UserTypes} from 'action_types';
@@ -50,8 +50,11 @@ function flagged(state = [], action) {
             let hasNewFlaggedPosts = false;
             action.data.forEach((pref) => {
                 if (pref.category === Preferences.CATEGORY_FLAGGED_POST) {
-                    hasNewFlaggedPosts = true;
-                    nextState.unshift(pref.name);
+                    const exists = nextState.find((p) => p === pref.name);
+                    if (!exists) {
+                        hasNewFlaggedPosts = true;
+                        nextState.unshift(pref.name);
+                    }
                 }
             });
 

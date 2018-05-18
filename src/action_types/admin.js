@@ -1,5 +1,5 @@
-// Copyright (c) 2017-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 // @flow
 
 import keyMirror from 'utils/key_mirror';
@@ -125,6 +125,10 @@ export default keyMirror({
     GET_PLUGIN_SUCCESS: null,
     GET_PLUGIN_FAILURE: null,
 
+    GET_PLUGIN_STATUSES_REQUEST: null,
+    GET_PLUGIN_STATUSES_SUCCESS: null,
+    GET_PLUGIN_STATUSES_FAILURE: null,
+
     REMOVE_PLUGIN_REQUEST: null,
     REMOVE_PLUGIN_SUCCESS: null,
     REMOVE_PLUGIN_FAILURE: null,
@@ -152,6 +156,7 @@ export default keyMirror({
     RECEIVED_USER_ACCESS_TOKENS_FOR_USER: null,
     RECEIVED_PLUGIN: null,
     RECEIVED_PLUGINS: null,
+    RECEIVED_PLUGIN_STATUSES: null,
     REMOVED_PLUGIN: null,
     ACTIVATED_PLUGIN: null,
     DEACTIVATED_PLUGIN: null,

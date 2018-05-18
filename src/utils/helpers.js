@@ -1,5 +1,5 @@
-// Copyright (c) 2017-present Mattermost, Inc. All Rights Reserved.
-// See License.txt for license information.
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
 import {createSelectorCreator, defaultMemoize} from 'reselect';
 import shallowEqual from 'shallow-equals';
@@ -79,3 +79,24 @@ export const sendMessageToRemoveBackwardsCompatibility = (currentVersion, minVer
         console.warn('You can now remove backwards-compatibility code from the project, as referenced in the stacktrace below.'); //eslint-disable-line no-console
     }
 };
+
+// Generates a RFC-4122 version 4 compliant globally unique identifier.
+export function generateId() {
+    // implementation taken from http://stackoverflow.com/a/2117523
+    var id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+
+    id = id.replace(/[xy]/g, (c) => {
+        var r = Math.floor(Math.random() * 16);
+
+        var v;
+        if (c === 'x') {
+            v = r;
+        } else {
+            v = (r & 0x3) | 0x8;
+        }
+
+        return v.toString(16);
+    });
+
+    return id;
+}
